@@ -5,159 +5,208 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
 <meta name="apple-mobile-web-app-title" content="BEIVZ Tasks"/>
-<meta name="theme-color" content="#FBF4EB"/>
+<meta name="theme-color" content="#E0E2DB"/>
 <title>BEIVZ · Task Board</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#FBF4EB;
-  --bg2:#ffffff;
-  --bg3:#fde8f1;
-  --border:#f0d5e2;
-  --border2:#e8bece;
-  --gold:#C43670;
-  --gold-dim:#a02d5e;
-  --gold-bg:#C4367012;
-  --red:#C43670;
-  --green:#5d9e75;
-  --txt:#3a1a28;
-  --txt2:#8a4a65;
-  --txt3:#c090aa;
-  --radius:8px;
-  --radius-sm:5px;
-  --sans:'DM Sans',sans-serif;
-  --mono:'DM Mono',monospace;
+  --bg:#E0E2DB;--bg2:#f5f6f2;--bg3:#d4d6d0;
+  --border:#c8cac4;--border2:#b8bab4;
+  --gold:#FF6978;--gold-dim:#e05060;--gold-bg:#FF697815;
+  --purple:#21A179;--purple-bg:#21A17915;
+  --green:#21A179;--green-bg:#21A17912;
+  --blue:#21A179;--yellow:#FF6978;--pink:#FF6978;
+  --txt:#1E2D2F;--txt2:#1E2D2F;--txt3:#5a7070;
+  --radius:8px;--radius-sm:5px;
+  --sans:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
 }
 html,body{height:100%;background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:14px;overflow:hidden}
 #app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:900px;margin:0 auto}
 
-/* ── HEADER ── */
-.hd{padding:14px 16px 12px;border-bottom:0.5px solid var(--border);flex-shrink:0}
-.hd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+/* ALERT BANNER */
+.alert-banner{display:none;background:#21A17920;border-bottom:1px solid #21A179;padding:8px 16px;font-size:12px;color:#1E2D2F;gap:8px;align-items:flex-start;flex-shrink:0}
+.alert-banner.show{display:flex}
+.alert-banner b{font-weight:600}
+.alert-close{margin-left:auto;cursor:pointer;font-size:16px;line-height:1;color:#1E2D2F;flex-shrink:0;padding:0 4px}
+.alert-list{list-style:none;margin-top:3px}
+.alert-list li::before{content:'· '}
+
+/* HEADER */
+.hd{padding:12px 16px 10px;border-bottom:0.5px solid #c8cac4;flex-shrink:0}
+.hd-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .brand{font-family:var(--mono);font-size:11px;letter-spacing:0.18em;color:var(--txt3);text-transform:uppercase}
-.brand b{color:var(--gold);font-weight:700}
+.brand b{color:#FF6978;font-weight:800}
 .hd-right{display:flex;align-items:center;gap:8px}
 .date-str{font-size:11px;color:var(--txt3)}
 .sync-badge{font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:20px;border:0.5px solid var(--border2);color:var(--txt3);transition:all 0.2s;white-space:nowrap}
 .sync-badge.syncing{border-color:var(--gold-dim);color:var(--gold)}
-.sync-badge.ok{border-color:#5d9e7540;color:var(--green)}
-.sync-badge.err{border-color:#e05c5c40;color:var(--red)}
-.filter-row{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+.sync-badge.ok{border-color:#21A17950;color:#21A179}
+.sync-badge.err{border-color:#FF697850;color:#FF6978}
+.filter-row{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
 .filter-row::-webkit-scrollbar{display:none}
 .pill{font-size:12px;padding:4px 12px;border-radius:20px;border:0.5px solid var(--border2);color:var(--txt2);cursor:pointer;transition:all 0.15s;white-space:nowrap;user-select:none;flex-shrink:0}
-.pill.active{background:#C4367018;border-color:#C43670;color:#C43670}
+.pill.active{background:#FF697815;border-color:#FF6978;color:#FF6978}
 
-/* ── TABS ── */
-.tabs{display:flex;border-bottom:0.5px solid var(--border);flex-shrink:0;padding:0 16px}
-.tab{font-size:13px;padding:10px 14px;cursor:pointer;color:var(--txt3);border-bottom:1.5px solid transparent;margin-bottom:-0.5px;transition:all 0.15s;user-select:none}
-.tab.active{color:var(--txt);border-bottom-color:#C43670}
+/* TABS */
+.tabs{display:flex;border-bottom:0.5px solid #c8cac4;flex-shrink:0;padding:0 16px}
+.tab{font-size:13px;padding:9px 13px;cursor:pointer;color:var(--txt3);border-bottom:1.5px solid transparent;margin-bottom:-0.5px;transition:all 0.15s;user-select:none}
+.tab.active{color:var(--txt);border-bottom-color:#FF6978}
 
-/* ── LAYOUT ── */
+/* LAYOUT */
 .body{display:flex;flex:1;min-height:0;overflow:hidden}
 
-/* ── SIDEBAR ── */
-.sidebar{width:160px;border-right:0.5px solid var(--border);padding:10px 0;overflow-y:auto;flex-shrink:0;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
-@media(max-width:520px){
-  .sidebar{width:130px}
-}
-.sidebar-label{font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--txt3);padding:8px 14px 4px}
-.area-item{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;cursor:pointer;font-size:12px;color:var(--txt2);transition:all 0.12s;gap:6px}
-.area-item:hover{background:var(--bg2);color:var(--txt)}
-.area-item.active{background:#FBD9E5;color:var(--txt)}
+/* SIDEBAR */
+.sidebar{width:155px;border-right:0.5px solid var(--border);padding:10px 0;overflow-y:auto;flex-shrink:0;background:#1E2D2F}
+@media(max-width:520px){.sidebar{width:120px}}
+.sidebar-label{font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:#7aA0A0;padding:8px 12px 4px}
+.area-item{display:flex;align-items:center;justify-content:space-between;padding:6px 12px;cursor:pointer;font-size:12px;color:#c8dada;transition:all 0.12s;gap:5px}
+.area-item:hover{background:#2a3d3f;color:#fff}
+.area-item.active{background:#21A17920;color:var(--txt);font-weight:500}
 .area-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .area-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.area-cnt{font-size:10px;color:var(--txt3);font-family:var(--mono)}
-.add-area-row{display:flex;align-items:center;gap:6px;padding:7px 14px;cursor:pointer;font-size:12px;color:var(--txt3);margin-top:2px}
-.add-area-row:hover{color:var(--txt)}
+.area-cnt{font-size:10px;color:#7aA0A0;font-family:var(--mono)}
+.add-area-row{display:flex;align-items:center;gap:5px;padding:6px 12px;cursor:pointer;font-size:12px;color:#7aA0A0;margin-top:2px}
+.add-area-row:hover{color:#fff}
 
-/* ── CONTENT ── */
+/* CONTENT */
 .content{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
-.content-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 10px;flex-shrink:0;border-bottom:0.5px solid var(--border)}
+.content-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px 8px;flex-shrink:0;border-bottom:0.5px solid #c8cac4}
 .content-title{font-size:14px;font-weight:500;color:var(--txt)}
-.add-btn{font-size:12px;padding:5px 12px;border:0.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;color:var(--txt2);background:transparent;transition:all 0.15s;display:flex;align-items:center;gap:5px;white-space:nowrap}
-.add-btn:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-bg)}
+.add-btn{font-size:12px;padding:5px 11px;border:0.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;color:var(--txt2);background:transparent;transition:all 0.15s;white-space:nowrap}
+.add-btn:hover{border-color:#FF6978;color:#FF6978;background:var(--gold-bg)}
 
-/* ── SCROLL AREA ── */
-.scroll-area{flex:1;overflow-y:auto;padding:12px 16px 24px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
-.scroll-area::-webkit-scrollbar{width:4px}
-.scroll-area::-webkit-scrollbar-track{background:transparent}
+/* SCROLL */
+.scroll-area{flex:1;overflow-y:auto;padding:10px 14px 24px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.scroll-area::-webkit-scrollbar{width:3px}
 .scroll-area::-webkit-scrollbar-thumb{background:var(--border)}
 
-/* ── TASK FORM ── */
-.task-form{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);padding:12px 14px;margin-bottom:12px}
-.task-form input[type=text]{width:100%;font-size:14px;background:#fdf5f8;border:0.5px solid var(--border2);border-radius:var(--radius-sm);padding:8px 10px;color:var(--txt);font-family:var(--sans);margin-bottom:8px;outline:none}
+/* TASK FORM */
+.task-form{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);padding:12px 13px;margin-bottom:10px}
+.task-form input[type=text]{width:100%;font-size:14px;background:#e8eae5;border:0.5px solid var(--border2);border-radius:var(--radius-sm);padding:7px 10px;color:var(--txt);font-family:var(--sans);margin-bottom:7px;outline:none}
 .task-form input[type=text]:focus{border-color:var(--gold)}
-.task-form textarea{width:100%;font-size:13px;resize:vertical;min-height:52px;background:#fdf5f8;border:0.5px solid var(--border2);border-radius:var(--radius-sm);padding:7px 10px;color:var(--txt);font-family:var(--sans);margin-bottom:8px;outline:none;line-height:1.5}
+.task-form textarea{width:100%;font-size:13px;resize:vertical;min-height:48px;background:#e8eae5;border:0.5px solid var(--border2);border-radius:var(--radius-sm);padding:6px 10px;color:var(--txt);font-family:var(--sans);margin-bottom:7px;outline:none;line-height:1.5}
 .task-form textarea:focus{border-color:var(--gold)}
-.form-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
-.form-row select,.form-row input[type=date]{font-size:12px;padding:6px 8px;background:#fdf5f8;border:0.5px solid var(--border2);border-radius:var(--radius-sm);color:var(--txt);font-family:var(--sans);outline:none;flex:1;min-width:120px}
-.form-row select:focus,.form-row input[type=date]:focus{border-color:var(--gold)}
+.form-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:7px}
+.form-row select,.form-row input[type=date],.form-row input[type=number]{font-size:12px;padding:5px 7px;background:#e8eae5;border:0.5px solid var(--border2);border-radius:var(--radius-sm);color:var(--txt);font-family:var(--sans);outline:none;flex:1;min-width:110px}
+.form-row select:focus,.form-row input:focus{border-color:var(--gold)}
+.recur-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12px;color:var(--txt2)}
+.recur-row input[type=checkbox]{width:15px;height:15px;accent-color:var(--gold);cursor:pointer}
+.recur-day-wrap{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--txt2)}
+.recur-day-wrap input[type=number]{width:60px;min-width:unset;flex:none}
 .form-actions{display:flex;gap:8px;justify-content:flex-end}
-.btn-save{font-size:12px;padding:6px 16px;background:var(--gold);border:none;border-radius:var(--radius-sm);cursor:pointer;color:#fff;font-weight:600;font-family:var(--sans)}}
-.btn-save:hover{background:#a02d5e}
-.btn-cancel{font-size:12px;padding:6px 12px;background:transparent;border:0.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;color:var(--txt2);font-family:var(--sans)}
+.btn-save{font-size:12px;padding:6px 16px;background:var(--gold);border:none;border-radius:var(--radius-sm);cursor:pointer;color:#fff;font-weight:600;font-family:var(--sans)}
+.btn-save:hover{background:var(--gold-dim)}
+.btn-cancel{font-size:12px;padding:6px 11px;background:transparent;border:0.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;color:var(--txt2);font-family:var(--sans)}
 
-/* ── SECTION LABEL ── */
-.section-lbl{font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--txt3);margin:14px 0 6px;padding-bottom:5px;border-bottom:0.5px solid var(--border)}
+/* SECTION LABEL */
+.section-lbl{font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--txt3);margin:12px 0 5px;padding-bottom:4px;border-bottom:0.5px solid #c8cac4}
 .section-lbl:first-child{margin-top:0}
 
-/* ── TASK ITEM ── */
-.task-item{display:flex;align-items:flex-start;gap:10px;padding:10px 10px;border-radius:var(--radius);border:0.5px solid var(--border2);transition:background 0.12s,border-color 0.12s;margin-bottom:6px;cursor:default;background:#fff}
-.task-item:hover{background:#fdf0f5;border-color:#F283AF}
+/* TASK ITEM */
+.task-item{display:flex;align-items:flex-start;gap:9px;padding:9px 10px;border-radius:var(--radius);border:0.5px solid var(--border2);margin-bottom:5px;background:#fff;transition:border-color 0.12s}
+.task-item:hover{border-color:#FF6978}
 .task-item.done{opacity:0.38}
-.task-cb{width:20px;height:20px;border-radius:5px;border:1.5px solid #e8bece;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;font-size:12px;font-weight:700;color:#fff;background:#fde8f1;user-select:none}
-.task-cb.checked{background:var(--gold);border-color:var(--gold)}
+.task-cb{width:20px;height:20px;border-radius:5px;border:1.5px solid #b8bab4;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;font-size:12px;font-weight:700;color:#fff;background:#E0E2DB;user-select:none}
+.task-cb.checked{background:#FF6978;border-color:#FF6978}
 .task-body{flex:1;min-width:0}
-.task-title{font-size:13px;color:var(--txt);line-height:1.45}
+.task-title{font-size:13px;color:var(--txt);line-height:1.4}
 .task-item.done .task-title{text-decoration:line-through;color:var(--txt3)}
 .task-note{font-size:11px;color:var(--txt3);margin-top:2px;line-height:1.4}
-.task-meta{display:flex;gap:5px;margin-top:4px;flex-wrap:wrap;align-items:center}
-.tag-area{font-size:10px;padding:1px 7px;border-radius:10px;border:0.5px solid}
+.task-meta{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;align-items:center}
+.tag-area{font-size:10px;padding:1px 6px;border-radius:10px;border:0.5px solid}
 .tag-due{font-size:10px;color:var(--txt3);font-family:var(--mono)}
-.tag-due.overdue{color:var(--red)}
-.tag-due.today{color:#a02d5e;font-weight:600}
-.prio-h{font-size:10px;padding:1px 6px;border-radius:10px;background:#C4367018;color:#C43670;border:0.5px solid #C4367040}
-.prio-m{font-size:10px;padding:1px 6px;border-radius:10px;background:#F3CC9730;color:#a07020;border:0.5px solid #F3CC9780}
-.prio-l{font-size:10px;padding:1px 6px;border-radius:10px;background:#FBD9E5;color:var(--txt3);border:0.5px solid var(--border2)}
-.task-acts{display:flex;gap:3px;opacity:0;transition:opacity 0.15s;flex-shrink:0}
+.tag-due.overdue{color:var(--gold)}
+.tag-due.today{color:#e05060;font-weight:600}
+.tag-recur{font-size:10px;color:#21A179;background:#21A17912;border:0.5px solid #21A17930;padding:1px 6px;border-radius:10px}
+.prio-h{font-size:10px;padding:1px 6px;border-radius:10px;background:#FF697818;color:#FF6978;border:0.5px solid #FF697840}
+.prio-m{font-size:10px;padding:1px 6px;border-radius:10px;background:#21A17940;color:#1E2D2F;border:0.5px solid #21A17970}
+.prio-l{font-size:10px;padding:1px 6px;border-radius:10px;background:#1E2D2F12;color:#1E2D2F;border:0.5px solid #1E2D2F30}
+.task-acts{display:flex;gap:2px;opacity:0;transition:opacity 0.15s;flex-shrink:0}
 .task-item:hover .task-acts{opacity:1}
-.act-btn{background:none;border:none;cursor:pointer;color:var(--txt3);padding:3px 5px;border-radius:4px;font-size:13px;line-height:1;transition:color 0.12s}
+.act-btn{background:none;border:none;cursor:pointer;color:var(--txt3);padding:3px 5px;border-radius:4px;font-size:13px;line-height:1}
 .act-btn:hover{color:var(--txt)}
-.act-btn.del:hover{color:var(--red)}
+.act-btn.del:hover{color:var(--gold)}
 
-/* ── EMPTY / LOADING ── */
-.empty{text-align:center;padding:48px 20px;color:var(--txt3);font-size:13px;line-height:2}
-.loading{text-align:center;padding:48px 20px;color:var(--txt3);font-size:13px}
-.spin{display:inline-block;width:18px;height:18px;border:1.5px solid var(--border2);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:8px}
+/* EMPTY / LOADING */
+.empty{text-align:center;padding:40px 20px;color:var(--txt3);font-size:13px;line-height:2}
+.loading{text-align:center;padding:40px 20px;color:var(--txt3);font-size:13px}
+.spin{display:inline-block;width:16px;height:16px;border:1.5px solid #b8bab4;border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── AREAS TAB ── */
-.area-card{display:flex;align-items:center;gap:12px;padding:11px 14px;border:0.5px solid var(--border);border-radius:var(--radius);margin-bottom:8px;background:var(--bg2)}
-.area-card-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+/* AREAS TAB */
+.area-card{display:flex;align-items:center;gap:10px;padding:10px 13px;border:0.5px solid var(--border);border-radius:var(--radius);margin-bottom:7px;background:#f5f6f2}
+.area-card-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
 .area-card-name{flex:1;font-size:14px;color:var(--txt)}
 .area-card-stat{font-size:11px;color:var(--txt3);font-family:var(--mono)}
 
-/* ── MOBILE TOUCH ── */
+/* ── CALENDAR ── */
+.cal-wrap{padding:10px 14px 20px}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cal-nav{display:flex;align-items:center;gap:8px}
+.cal-month{font-size:15px;font-weight:600;color:var(--txt)}
+.cal-nav-btn{background:none;border:0.5px solid var(--border2);border-radius:var(--radius-sm);padding:4px 10px;cursor:pointer;font-size:13px;color:var(--txt2)}
+.cal-nav-btn:hover{background:#d4d6d0;border-color:#FF6978}
+.cal-today-btn{font-size:11px;padding:3px 9px;border:0.5px solid var(--border2);border-radius:20px;cursor:pointer;background:transparent;color:var(--txt3);font-family:var(--sans)}
+.cal-today-btn:hover{border-color:#FF6978;color:#FF6978}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-dow{text-align:center;font-size:10px;font-family:var(--mono);letter-spacing:0.08em;color:var(--txt3);padding:4px 0 6px;text-transform:uppercase}
+.cal-day{min-height:52px;padding:4px;border-radius:6px;border:0.5px solid transparent;cursor:pointer;transition:all 0.12s;background:#fff;position:relative}
+.cal-day:hover{border-color:#21A179;background:#e8eae5}
+.cal-day.other-month{background:transparent;border-color:transparent}
+.cal-day.other-month .cal-day-num{color:var(--txt3);opacity:0.4}
+.cal-day.is-today{border-color:#FF6978;background:#FF697808}
+.cal-day.is-today .cal-day-num{color:#FF6978;font-weight:700}
+.cal-day.selected{border-color:#21A179;background:#21A17915}
+.cal-day-num{font-size:12px;font-weight:500;color:var(--txt);line-height:1;margin-bottom:3px}
+.cal-dots{display:flex;flex-wrap:wrap;gap:2px;margin-top:2px}
+.cal-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.cal-dot.recur{background:#21A179}
+.cal-dot.task{background:#FF6978}
+.cal-dot.done{background:#21A179}
+
+/* DAY DETAIL PANEL */
+.day-panel{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);padding:12px 13px;margin-top:10px}
+.day-panel-title{font-size:13px;font-weight:600;color:var(--txt);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.day-panel-close{cursor:pointer;color:var(--txt3);font-size:16px;line-height:1}
+.day-panel-empty{font-size:12px;color:var(--txt3);text-align:center;padding:12px 0}
+.dp-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:0.5px solid #c8cac4}
+.dp-item:last-child{border-bottom:none}
+.dp-cb{width:16px;height:16px;border-radius:4px;border:1.5px solid #b8bab4;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:10px;font-weight:700;color:#fff;background:#E0E2DB}
+.dp-cb.checked{background:#FF6978;border-color:#FF6978}
+.dp-body{flex:1;min-width:0}
+.dp-title{font-size:13px;color:var(--txt);line-height:1.35}
+.dp-title.done{text-decoration:line-through;color:var(--txt3)}
+.dp-meta{font-size:10px;color:var(--txt3);margin-top:2px}
+.dp-recur-badge{display:inline-block;font-size:9px;padding:1px 5px;border-radius:8px;background:#21A17915;color:#21A179;border:0.5px solid #21A17940;margin-left:4px}
+
+/* MOBILE TOUCH */
 @media(hover:none){
   .task-acts{opacity:1}
   .act-btn{padding:5px 7px;font-size:15px}
 }
-
-/* ── RESPONSIVE ── */
 @media(max-width:480px){
-  .hd{padding:12px 14px 10px}
-  .content-bar{padding:10px 14px 8px}
-  .scroll-area{padding:10px 14px 20px}
-  .brand{font-size:10px}
+  .hd{padding:10px 12px 8px}
+  .content-bar{padding:8px 12px}
+  .scroll-area,.cal-wrap{padding:8px 12px 20px}
+  .cal-day{min-height:40px}
 }
 </style>
 </head>
 <body>
 <div id="app">
+  <!-- ALERT BANNER -->
+  <div class="alert-banner" id="alert-banner">
+    <div style="flex:1">
+      <b>⚠ Perlu perhatian:</b>
+      <ul class="alert-list" id="alert-list"></ul>
+    </div>
+    <span class="alert-close" id="alert-close">×</span>
+  </div>
+
   <!-- HEADER -->
   <div class="hd">
     <div class="hd-top">
@@ -178,12 +227,13 @@ html,body{height:100%;background:var(--bg);color:var(--txt);font-family:var(--sa
   <!-- TABS -->
   <div class="tabs">
     <div class="tab active" data-tab="tasks">Tugas</div>
+    <div class="tab" data-tab="calendar">Kalender</div>
     <div class="tab" data-tab="areas">Area</div>
   </div>
 
   <!-- BODY -->
   <div class="body">
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar-wrap">
       <div class="sidebar-label">Area</div>
       <div id="area-list"></div>
       <div class="add-area-row" id="add-area-row">＋ Tambah area</div>
@@ -203,78 +253,129 @@ html,body{height:100%;background:var(--bg);color:var(--txt);font-family:var(--sa
 
 <script>
 const GAS = 'https://script.google.com/macros/s/AKfycbyrR_f0UcqTabITfEEh1xkBStRFXS4cCywHjuXiT1xQRJYGDDKWxJhl8Gw-nthZOo7c/exec';
-const COLORS = ['#c9a84c','#5d9e75','#5a8ee0','#e05c5c','#a07cd4','#e08050','#5abcd4','#d45a8e'];
+const COLORS = ['#FD5A46','#5d9e75','#552CB7','#058CD7','#FB7DA8','#21A179','#00995E','#e08050'];
 
 const DEF_AREAS = [
   {id:'a1',name:'Produksi & QC',color:'#5d9e75'},
-  {id:'a2',name:'Regulatory / BPOM',color:'#5a8ee0'},
-  {id:'a3',name:'Marketing & Sales',color:'#c9a84c'},
-  {id:'a4',name:'App Development',color:'#a07cd4'},
-  {id:'a5',name:'Operasional',color:'#e08050'},
+  {id:'a2',name:'Regulatory / BPOM',color:'#552CB7'},
+  {id:'a3',name:'Marketing & Sales',color:'#FD5A46'},
+  {id:'a4',name:'App Development',color:'#058CD7'},
+  {id:'a5',name:'Operasional',color:'#21A179'},
 ];
 
 const today = new Date().toISOString().split('T')[0];
-function dPlus(n){ const d=new Date(); d.setDate(d.getDate()+n); return d.toISOString().split('T')[0]; }
+function dPlus(n){const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().split('T')[0];}
 
 const DEF_TASKS = [
-  {id:'t1',title:'Finalisasi Catatan Pengemasan Batch bulan ini',area:'a1',priority:'high',due:dPlus(0),done:false,note:''},
-  {id:'t2',title:'Update Log Penggunaan Peralatan (CPKB)',area:'a1',priority:'mid',due:dPlus(2),done:false,note:''},
-  {id:'t3',title:'Cek status notifikasi Men Hair Perfume',area:'a2',priority:'high',due:dPlus(0),done:false,note:''},
-  {id:'t4',title:'Review brief scalp tonic — formula awal',area:'a2',priority:'mid',due:dPlus(5),done:false,note:''},
-  {id:'t5',title:'Rekrut live host Shopee + TikTok',area:'a5',priority:'high',due:dPlus(3),done:false,note:'Belum dimulai'},
-  {id:'t6',title:'Update Barber Roots — sync multi-device test',area:'a4',priority:'mid',due:dPlus(1),done:false,note:''},
-  {id:'t7',title:'Channel revenue tracker — input data Mei',area:'a5',priority:'low',due:dPlus(7),done:false,note:''},
-  {id:'t8',title:'Konten TikTok minggu ini — 3 video',area:'a3',priority:'high',due:dPlus(0),done:false,note:''},
+  {id:'t1',title:'Finalisasi Catatan Pengemasan Batch bulan ini',area:'a1',priority:'high',due:dPlus(0),done:false,note:'',recurring:false,recurDay:0},
+  {id:'t2',title:'Update Log Penggunaan Peralatan (CPKB)',area:'a1',priority:'mid',due:dPlus(2),done:false,note:'',recurring:false,recurDay:0},
+  {id:'t3',title:'Cek status notifikasi Men Hair Perfume',area:'a2',priority:'high',due:dPlus(0),done:false,note:'',recurring:false,recurDay:0},
+  {id:'t4',title:'Review brief scalp tonic — formula awal',area:'a2',priority:'mid',due:dPlus(5),done:false,note:'',recurring:false,recurDay:0},
+  {id:'t5',title:'Rekrut live host Shopee + TikTok',area:'a5',priority:'high',due:dPlus(3),done:false,note:'Belum dimulai',recurring:false,recurDay:0},
+  {id:'t6',title:'Update Barber Roots — sync multi-device test',area:'a4',priority:'mid',due:dPlus(1),done:false,note:'',recurring:false,recurDay:0},
+  {id:'t7',title:'Channel revenue tracker — input data Mei',area:'a5',priority:'low',due:dPlus(7),done:false,note:'',recurring:false,recurDay:0},
+  {id:'t8',title:'Konten TikTok minggu ini — 3 video',area:'a3',priority:'high',due:dPlus(0),done:false,note:'',recurring:false,recurDay:0},
+  {id:'t9',title:'Bayar WiFi',area:'a5',priority:'high',due:thisMonthDay(5),done:false,note:'',recurring:true,recurDay:5},
+  {id:'t10',title:'Bayar TTK',area:'a5',priority:'high',due:thisMonthDay(16),done:false,note:'',recurring:true,recurDay:16},
+  {id:'t11',title:'Gaji Puput',area:'a5',priority:'high',due:thisMonthDay(1),done:false,note:'',recurring:true,recurDay:1},
 ];
 
+function thisMonthDay(day){
+  const n=new Date();
+  const d=new Date(n.getFullYear(),n.getMonth(),day);
+  // if already passed this month, set to next month
+  if(d<new Date(today)) d.setMonth(d.getMonth()+1);
+  return d.toISOString().split('T')[0];
+}
+
 let S = {
-  areas: DEF_AREAS,
-  tasks: DEF_TASKS,
-  activeArea: 'all',
-  filter: 'all',
-  tab: 'tasks',
-  showForm: false,
-  editId: null,
-  fd: {title:'',area:'',priority:'mid',due:'',note:''}
+  areas:DEF_AREAS, tasks:DEF_TASKS,
+  activeArea:'all', filter:'all', tab:'tasks',
+  showForm:false, editId:null,
+  fd:{title:'',area:'',priority:'mid',due:'',note:'',recurring:false,recurDay:''},
+  calYear:new Date().getFullYear(), calMonth:new Date().getMonth(),
+  calSelected:null
 };
 
-// ── SYNC ────────────────────────────────────────────
-function setSyncing(type,msg){ const b=document.getElementById('sync-badge'); b.className='sync-badge '+type; b.textContent=msg; }
+// ── SYNC ────────────────────────────────────────
+function setSyncing(t,m){const b=document.getElementById('sync-badge');b.className='sync-badge '+t;b.textContent=m;}
 
 async function loadSheet(){
   setSyncing('syncing','↻ memuat…');
-  try {
-    const r = await fetch(GAS+'?action=load&t='+Date.now());
-    const d = await r.json();
-    if(d.tasks && d.areas && (d.tasks.length||d.areas.length)){
-      S.tasks = d.tasks.map(t=>({...t,done:t.done===true||t.done==='true'}));
-      S.areas = d.areas;
+  try{
+    const r=await fetch(GAS+'?action=load&t='+Date.now());
+    const d=await r.json();
+    if(d.tasks&&d.areas&&(d.tasks.length||d.areas.length)){
+      S.tasks=d.tasks.map(t=>({...t,done:t.done===true||t.done==='true',recurring:t.recurring===true||t.recurring==='true',recurDay:parseInt(t.recurDay)||0}));
+      S.areas=d.areas;
       setSyncing('ok','✓ Sheets');
-    } else {
-      await pushSheet();
-    }
-  } catch(e){
+    } else { await pushSheet(); }
+  }catch(e){
     setSyncing('err','⚠ offline');
-    try{ const p=JSON.parse(localStorage.getItem('bvz_tasks')||'{}'); if(p.tasks){S.tasks=p.tasks;S.areas=p.areas;} }catch(_){}
+    try{const p=JSON.parse(localStorage.getItem('bvz_tasks')||'{}');if(p.tasks){S.tasks=p.tasks;S.areas=p.areas;}}catch(_){}
   }
+  autoGenerateRecurring();
+  showAlerts();
   render();
 }
 
 let saveTimer=null;
-function queueSave(){ clearTimeout(saveTimer); saveTimer=setTimeout(pushSheet,1200); }
+function queueSave(){clearTimeout(saveTimer);saveTimer=setTimeout(pushSheet,1200);}
 
 async function pushSheet(){
   setSyncing('syncing','↻ menyimpan…');
-  localStorage.setItem('bvz_tasks', JSON.stringify({tasks:S.tasks,areas:S.areas}));
-  try {
+  localStorage.setItem('bvz_tasks',JSON.stringify({tasks:S.tasks,areas:S.areas}));
+  try{
     const p=new URLSearchParams({action:'save',data:JSON.stringify({tasks:S.tasks,areas:S.areas})});
     const r=await fetch(GAS,{method:'POST',body:p});
     const d=await r.json();
-    setSyncing(d.success?'ok':'err', d.success?'✓ Sheets':'⚠ gagal');
-  } catch(e){ setSyncing('err','⚠ offline'); }
+    setSyncing(d.success?'ok':'err',d.success?'✓ Sheets':'⚠ gagal');
+  }catch(e){setSyncing('err','⚠ offline');}
 }
 
-// ── HELPERS ─────────────────────────────────────────
+// ── RECURRING AUTO-GENERATE ──────────────────────
+function autoGenerateRecurring(){
+  const now=new Date();
+  const yr=now.getFullYear(), mo=now.getMonth();
+  S.tasks.forEach(t=>{
+    if(!t.recurring||!t.recurDay) return;
+    // Calculate due date for current month
+    const due=new Date(yr,mo,t.recurDay);
+    const dueStr=due.toISOString().split('T')[0];
+    // If task is done and due date was last month's, reset for this month
+    if(t.done && t.due < today){
+      t.done=false;
+      t.due=dueStr;
+    }
+    // If due date is in the past (this month already passed), set to next month
+    if(!t.done && t.due < today){
+      const nextDue=new Date(yr,mo+1,t.recurDay);
+      t.due=nextDue.toISOString().split('T')[0];
+    }
+  });
+}
+
+// ── ALERT BANNER ────────────────────────────────
+function showAlerts(){
+  const urgent=S.tasks.filter(t=>{
+    if(t.done) return false;
+    if(!t.due) return false;
+    const diff=Math.round((new Date(t.due)-new Date(today))/86400000);
+    return diff>=0 && diff<=3;
+  });
+  const banner=document.getElementById('alert-banner');
+  const list=document.getElementById('alert-list');
+  if(!urgent.length){banner.classList.remove('show');return;}
+  list.innerHTML=urgent.slice(0,5).map(t=>{
+    const diff=Math.round((new Date(t.due)-new Date(today))/86400000);
+    const when=diff===0?'hari ini':diff===1?'besok':`${diff} hari lagi`;
+    return `<li>${t.title} <b>(${when})</b></li>`;
+  }).join('');
+  banner.classList.add('show');
+  document.getElementById('alert-close').onclick=()=>banner.classList.remove('show');
+}
+
+// ── HELPERS ─────────────────────────────────────
 const esc=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const aById=id=>S.areas.find(a=>a.id===id);
 
@@ -286,7 +387,7 @@ function fmtDue(due){
   if(diff<-1) return Math.abs(diff)+' hari lalu';
   if(diff===1) return 'besok';
   if(diff<=6) return diff+' hari lagi';
-  const d=new Date(due); return d.toLocaleDateString('id-ID',{day:'numeric',month:'short'});
+  const d=new Date(due);return d.toLocaleDateString('id-ID',{day:'numeric',month:'short'});
 }
 
 function counts(){
@@ -307,24 +408,21 @@ function filtered(){
   return t;
 }
 
-// ── RENDER ──────────────────────────────────────────
+// ── RENDER MAIN ─────────────────────────────────
 function render(){
-  // Date
   document.getElementById('date-str').textContent=new Date().toLocaleDateString('id-ID',{weekday:'short',day:'numeric',month:'short'});
-  // Counts
   const c=counts();
   document.getElementById('cnt-all').textContent=c.all;
   document.getElementById('cnt-today').textContent=c.today;
   document.getElementById('cnt-over').textContent=c.over;
   document.getElementById('cnt-done').textContent=c.done;
-  // Pills
   document.querySelectorAll('.pill').forEach(p=>p.classList.toggle('active',p.dataset.filter===S.filter));
-  // Tabs
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===S.tab));
-  // Areas sidebar
+  // sidebar visibility
+  document.getElementById('sidebar-wrap').style.display=S.tab==='calendar'?'none':'';
   renderSidebar();
-  // Content
-  if(S.tab==='areas') renderAreasTab();
+  if(S.tab==='calendar') renderCalendar();
+  else if(S.tab==='areas') renderAreasTab();
   else renderTasksTab();
 }
 
@@ -332,7 +430,7 @@ function renderSidebar(){
   const el=document.getElementById('area-list');
   const allOpen=S.tasks.filter(t=>!t.done).length;
   let h=`<div class="area-item ${S.activeArea==='all'?'active':''}" data-area="all">
-    <span class="area-dot" style="background:#555"></span>
+    <span class="area-dot" style="background:#aaa"></span>
     <span class="area-name">Semua</span>
     <span class="area-cnt">${allOpen||''}</span></div>`;
   S.areas.forEach(a=>{
@@ -343,19 +441,17 @@ function renderSidebar(){
       <span class="area-cnt">${n||''}</span></div>`;
   });
   el.innerHTML=h;
-  el.querySelectorAll('.area-item').forEach(el=>{
-    el.onclick=()=>{ S.activeArea=el.dataset.area; render(); };
-  });
+  el.querySelectorAll('.area-item').forEach(el=>{el.onclick=()=>{S.activeArea=el.dataset.area;render();};});
 }
 
+// ── TASKS TAB ───────────────────────────────────
 function renderTasksTab(){
-  const title=document.getElementById('content-title');
-  title.textContent=S.activeArea==='all'?'Semua Tugas':(aById(S.activeArea)?.name||'Tugas');
+  document.getElementById('content-title').textContent=S.activeArea==='all'?'Semua Tugas':(aById(S.activeArea)?.name||'Tugas');
   const btn=document.getElementById('add-btn');
   btn.textContent='＋ Tugas baru';
   btn.onclick=()=>{
     S.showForm=!S.showForm;
-    if(S.showForm){ S.editId=null; S.fd={title:'',area:S.activeArea!=='all'?S.activeArea:'',priority:'mid',due:'',note:''}; }
+    if(S.showForm){S.editId=null;S.fd={title:'',area:S.activeArea!=='all'?S.activeArea:'',priority:'mid',due:'',note:'',recurring:false,recurDay:''};}
     render();
   };
   renderForm();
@@ -364,7 +460,7 @@ function renderTasksTab(){
 
 function renderForm(){
   const c=document.getElementById('form-container');
-  if(!S.showForm){ c.innerHTML=''; return; }
+  if(!S.showForm){c.innerHTML='';return;}
   const fd=S.fd;
   const opts=S.areas.map(a=>`<option value="${a.id}" ${fd.area===a.id?'selected':''}>${esc(a.name)}</option>`).join('');
   c.innerHTML=`<div class="task-form">
@@ -377,6 +473,16 @@ function renderForm(){
         <option value="mid" ${fd.priority==='mid'?'selected':''}>🟡 Sedang</option>
         <option value="low" ${fd.priority==='low'?'selected':''}>⚪ Rendah</option>
       </select>
+    </div>
+    <div class="recur-row">
+      <input type="checkbox" id="f-recur" ${fd.recurring?'checked':''}/>
+      <label for="f-recur">🔁 Ulangi setiap bulan</label>
+      <div class="recur-day-wrap" id="recur-day-wrap" style="display:${fd.recurring?'flex':'none'}">
+        <span>tanggal</span>
+        <input type="number" id="f-recurday" min="1" max="28" value="${fd.recurDay||''}" placeholder="1-28"/>
+      </div>
+    </div>
+    <div class="form-row" id="due-row" style="display:${fd.recurring?'none':'flex'}">
       <input type="date" id="f-due" value="${fd.due}"/>
     </div>
     <div class="form-actions">
@@ -391,18 +497,28 @@ function renderForm(){
   document.getElementById('f-area').onchange=e=>S.fd.area=e.target.value;
   document.getElementById('f-prio').onchange=e=>S.fd.priority=e.target.value;
   document.getElementById('f-due').onchange=e=>S.fd.due=e.target.value;
-  document.getElementById('f-cancel').onclick=()=>{ S.showForm=false; S.editId=null; render(); };
+  document.getElementById('f-recur').onchange=e=>{
+    S.fd.recurring=e.target.checked;
+    document.getElementById('recur-day-wrap').style.display=e.target.checked?'flex':'none';
+    document.getElementById('due-row').style.display=e.target.checked?'none':'flex';
+  };
+  document.getElementById('f-recurday').oninput=e=>S.fd.recurDay=parseInt(e.target.value)||'';
+  document.getElementById('f-cancel').onclick=()=>{S.showForm=false;S.editId=null;render();};
   document.getElementById('f-save').onclick=()=>{
     const title=document.getElementById('f-title').value.trim();
     if(!title) return;
+    const isRecur=document.getElementById('f-recur').checked;
+    const recurDay=parseInt(document.getElementById('f-recurday')?.value)||0;
+    let due=document.getElementById('f-due')?.value||'';
+    if(isRecur && recurDay>0) due=thisMonthDay(recurDay);
     if(S.editId){
       const i=S.tasks.findIndex(t=>t.id===S.editId);
-      if(i>=0) S.tasks[i]={...S.tasks[i],title,area:S.fd.area,priority:S.fd.priority,due:S.fd.due,note:S.fd.note};
+      if(i>=0) S.tasks[i]={...S.tasks[i],title,area:S.fd.area,priority:S.fd.priority,due,note:S.fd.note,recurring:isRecur,recurDay};
     } else {
-      S.tasks.unshift({id:'t'+Date.now(),title,area:S.fd.area||S.areas[0]?.id||'',priority:S.fd.priority,due:S.fd.due,note:S.fd.note,done:false});
+      S.tasks.unshift({id:'t'+Date.now(),title,area:S.fd.area||S.areas[0]?.id||'',priority:S.fd.priority,due,note:S.fd.note,done:false,recurring:isRecur,recurDay});
     }
-    S.showForm=false; S.editId=null; S.fd={title:'',area:'',priority:'mid',due:'',note:''};
-    queueSave(); render();
+    S.showForm=false;S.editId=null;S.fd={title:'',area:'',priority:'mid',due:'',note:'',recurring:false,recurDay:''};
+    queueSave();render();
   };
 }
 
@@ -422,6 +538,7 @@ function taskCard(t){
         ${a?`<span class="tag-area" style="border-color:${a.color}44;color:${a.color}">${esc(a.name)}</span>`:''}
         ${ds?`<span class="tag-due ${isOver?'overdue':''} ${isTod?'today':''}">${isOver?'⚠ ':''}${ds}</span>`:''}
         <span class="${pc}">${pl}</span>
+        ${t.recurring?`<span class="tag-recur">🔁 tgl ${t.recurDay}</span>`:''}
       </div>
     </div>
     <div class="task-acts">
@@ -434,24 +551,137 @@ function taskCard(t){
 function renderTasks(){
   const tl=document.getElementById('task-list');
   const tasks=filtered();
-  if(!tasks.length){ tl.innerHTML='<div class="empty">Tidak ada tugas di sini.<br>Tambah dengan tombol di atas.</div>'; return; }
+  if(!tasks.length){tl.innerHTML='<div class="empty">Tidak ada tugas di sini.<br>Tambah dengan tombol di atas.</div>';return;}
   const open=tasks.filter(t=>!t.done);
   const done=tasks.filter(t=>t.done);
   let h='';
-  if(open.length){ h+=`<div class="section-lbl">Belum selesai · ${open.length}</div>`; open.forEach(t=>h+=taskCard(t)); }
-  if(done.length){ h+=`<div class="section-lbl" style="margin-top:16px">Selesai · ${done.length}</div>`; done.forEach(t=>h+=taskCard(t)); }
+  if(open.length){h+=`<div class="section-lbl">Belum selesai · ${open.length}</div>`;open.forEach(t=>h+=taskCard(t));}
+  if(done.length){h+=`<div class="section-lbl" style="margin-top:14px">Selesai · ${done.length}</div>`;done.forEach(t=>h+=taskCard(t));}
   tl.innerHTML=h;
   tl.querySelectorAll('.task-cb').forEach(cb=>{
-    cb.onclick=e=>{ e.stopPropagation(); const t=S.tasks.find(x=>x.id===cb.dataset.id); if(t){t.done=!t.done; queueSave(); render();} };
+    cb.onclick=e=>{e.stopPropagation();const t=S.tasks.find(x=>x.id===cb.dataset.id);if(t){t.done=!t.done;if(t.recurring&&t.done&&t.recurDay){const n=new Date(t.due);n.setMonth(n.getMonth()+1);t.due=n.toISOString().split('T')[0];}queueSave();render();}};
   });
   tl.querySelectorAll('.t-edit').forEach(btn=>{
-    btn.onclick=e=>{ e.stopPropagation(); const t=S.tasks.find(x=>x.id===btn.dataset.id); if(t){S.editId=btn.dataset.id;S.fd={title:t.title,area:t.area,priority:t.priority,due:t.due,note:t.note||''};S.showForm=true;render();document.getElementById('scroll-area').scrollTop=0;} };
+    btn.onclick=e=>{e.stopPropagation();const t=S.tasks.find(x=>x.id===btn.dataset.id);if(t){S.editId=btn.dataset.id;S.fd={title:t.title,area:t.area,priority:t.priority,due:t.due,note:t.note||'',recurring:!!t.recurring,recurDay:t.recurDay||''};S.showForm=true;render();document.getElementById('scroll-area').scrollTop=0;}};
   });
   tl.querySelectorAll('.t-del').forEach(btn=>{
-    btn.onclick=e=>{ e.stopPropagation(); if(confirm('Hapus tugas ini?')){S.tasks=S.tasks.filter(x=>x.id!==btn.dataset.id);queueSave();render();} };
+    btn.onclick=e=>{e.stopPropagation();if(confirm('Hapus tugas ini?')){S.tasks=S.tasks.filter(x=>x.id!==btn.dataset.id);queueSave();render();}};
   });
 }
 
+// ── CALENDAR TAB ────────────────────────────────
+function renderCalendar(){
+  document.getElementById('content-title').textContent='Kalender';
+  document.getElementById('add-btn').textContent='＋ Tugas baru';
+  document.getElementById('add-btn').onclick=()=>{S.tab='tasks';S.showForm=true;S.fd={title:'',area:'',priority:'mid',due:'',note:'',recurring:false,recurDay:''};render();};
+  document.getElementById('form-container').innerHTML='';
+
+  const yr=S.calYear, mo=S.calMonth;
+  const monthName=new Date(yr,mo,1).toLocaleDateString('id-ID',{month:'long',year:'numeric'});
+  const firstDay=new Date(yr,mo,1).getDay();
+  const daysInMonth=new Date(yr,mo+1,0).getDate();
+  const daysInPrev=new Date(yr,mo,0).getDate();
+
+  // Build date->tasks map
+  const taskMap={};
+  S.tasks.forEach(t=>{
+    if(!t.due) return;
+    const key=t.due.slice(0,10);
+    if(!taskMap[key]) taskMap[key]=[];
+    taskMap[key].push(t);
+  });
+
+  const DOWS=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+  let gridHTML=DOWS.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+
+  // Prev month days
+  for(let i=firstDay-1;i>=0;i--){
+    const d=daysInPrev-i;
+    gridHTML+=`<div class="cal-day other-month"><div class="cal-day-num">${d}</div></div>`;
+  }
+
+  // This month days
+  for(let d=1;d<=daysInMonth;d++){
+    const dateStr=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dayTasks=taskMap[dateStr]||[];
+    const isToday=dateStr===today;
+    const isSel=S.calSelected===dateStr;
+    let dotsHTML='';
+    dayTasks.forEach(t=>{
+      const cls=t.done?'done':t.recurring?'recur':'task';
+      dotsHTML+=`<span class="cal-dot ${cls}"></span>`;
+    });
+    gridHTML+=`<div class="cal-day ${isToday?'is-today':''} ${isSel?'selected':''}" data-date="${dateStr}">
+      <div class="cal-day-num">${d}</div>
+      <div class="cal-dots">${dotsHTML}</div>
+    </div>`;
+  }
+
+  // Next month padding
+  const total=firstDay+daysInMonth;
+  const remaining=(7-total%7)%7;
+  for(let d=1;d<=remaining;d++){
+    gridHTML+=`<div class="cal-day other-month"><div class="cal-day-num">${d}</div></div>`;
+  }
+
+  // Day panel
+  let panelHTML='';
+  if(S.calSelected){
+    const selTasks=taskMap[S.calSelected]||[];
+    const selDate=new Date(S.calSelected).toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long'});
+    panelHTML=`<div class="day-panel">
+      <div class="day-panel-title">
+        <span>${selDate}</span>
+        <span class="day-panel-close" id="dp-close">×</span>
+      </div>`;
+    if(!selTasks.length){
+      panelHTML+=`<div class="day-panel-empty">Tidak ada tugas di hari ini</div>`;
+    } else {
+      selTasks.forEach(t=>{
+        const a=aById(t.area);
+        panelHTML+=`<div class="dp-item">
+          <div class="dp-cb ${t.done?'checked':''}" data-id="${t.id}">${t.done?'✓':''}</div>
+          <div class="dp-body">
+            <div class="dp-title ${t.done?'done':''}">${esc(t.title)}${t.recurring?`<span class="dp-recur-badge">🔁 tgl ${t.recurDay}</span>`:''}</div>
+            <div class="dp-meta">${a?esc(a.name):''}</div>
+          </div>
+        </div>`;
+      });
+    }
+    panelHTML+='</div>';
+  }
+
+  document.getElementById('task-list').innerHTML='';
+  document.getElementById('scroll-area').innerHTML=`
+    <div class="cal-wrap">
+      <div class="cal-header">
+        <div class="cal-nav">
+          <button class="cal-nav-btn" id="cal-prev">‹</button>
+          <div class="cal-month">${monthName}</div>
+          <button class="cal-nav-btn" id="cal-next">›</button>
+        </div>
+        <button class="cal-today-btn" id="cal-today-btn">Hari ini</button>
+      </div>
+      <div class="cal-grid" id="cal-grid">${gridHTML}</div>
+      <div id="day-panel-wrap">${panelHTML}</div>
+    </div>`;
+
+  document.getElementById('cal-prev').onclick=()=>{S.calMonth--;if(S.calMonth<0){S.calMonth=11;S.calYear--;}render();};
+  document.getElementById('cal-next').onclick=()=>{S.calMonth++;if(S.calMonth>11){S.calMonth=0;S.calYear++;}render();};
+  document.getElementById('cal-today-btn').onclick=()=>{S.calYear=new Date().getFullYear();S.calMonth=new Date().getMonth();S.calSelected=today;render();};
+
+  document.querySelectorAll('.cal-day[data-date]').forEach(el=>{
+    el.onclick=()=>{S.calSelected=el.dataset.date===S.calSelected?null:el.dataset.date;render();};
+  });
+  const dpClose=document.getElementById('dp-close');
+  if(dpClose) dpClose.onclick=()=>{S.calSelected=null;render();};
+
+  document.querySelectorAll('.dp-cb').forEach(cb=>{
+    cb.onclick=e=>{e.stopPropagation();const t=S.tasks.find(x=>x.id===cb.dataset.id);if(t){t.done=!t.done;if(t.recurring&&t.done&&t.recurDay){const n=new Date(t.due);n.setMonth(n.getMonth()+1);t.due=n.toISOString().split('T')[0];}queueSave();render();}};
+  });
+}
+
+// ── AREAS TAB ───────────────────────────────────
 function renderAreasTab(){
   document.getElementById('content-title').textContent='Area & Proyek';
   const btn=document.getElementById('add-btn');
@@ -459,7 +689,7 @@ function renderAreasTab(){
   btn.onclick=addArea;
   document.getElementById('form-container').innerHTML='';
   const tl=document.getElementById('task-list');
-  if(!S.areas.length){ tl.innerHTML='<div class="empty">Belum ada area.</div>'; return; }
+  if(!S.areas.length){tl.innerHTML='<div class="empty">Belum ada area.</div>';return;}
   let h='';
   S.areas.forEach(a=>{
     const open=S.tasks.filter(t=>t.area===a.id&&!t.done).length;
@@ -468,12 +698,12 @@ function renderAreasTab(){
       <span class="area-card-dot" style="background:${a.color}"></span>
       <span class="area-card-name">${esc(a.name)}</span>
       <span class="area-card-stat">${open} aktif · ${done} selesai</span>
-      <button class="act-btn del a-del" data-id="${a.id}" title="Hapus">✕</button>
+      <button class="act-btn del a-del" data-id="${a.id}">✕</button>
     </div>`;
   });
   tl.innerHTML=h;
   tl.querySelectorAll('.a-del').forEach(btn=>{
-    btn.onclick=()=>{ if(confirm('Hapus area ini?')){S.areas=S.areas.filter(a=>a.id!==btn.dataset.id);queueSave();render();} };
+    btn.onclick=()=>{if(confirm('Hapus area ini?')){S.areas=S.areas.filter(a=>a.id!==btn.dataset.id);queueSave();render();}};
   });
 }
 
@@ -481,19 +711,18 @@ function addArea(){
   const name=prompt('Nama area baru:');
   if(!name||!name.trim()) return;
   S.areas.push({id:'a'+Date.now(),name:name.trim(),color:COLORS[S.areas.length%COLORS.length]});
-  queueSave(); render();
+  queueSave();render();
 }
 
-// ── EVENTS ──────────────────────────────────────────
+// ── EVENTS ──────────────────────────────────────
 document.querySelectorAll('.tab').forEach(t=>{
-  t.onclick=()=>{ S.tab=t.dataset.tab; S.showForm=false; render(); };
+  t.onclick=()=>{S.tab=t.dataset.tab;S.showForm=false;render();};
 });
 document.querySelectorAll('.pill').forEach(p=>{
-  p.onclick=()=>{ S.filter=p.dataset.filter; render(); };
+  p.onclick=()=>{S.filter=p.dataset.filter;render();};
 });
 document.getElementById('add-area-row').onclick=addArea;
 
-// Init
 loadSheet();
 </script>
 </body>
