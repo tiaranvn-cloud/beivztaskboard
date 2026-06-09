@@ -244,8 +244,24 @@ html,body{height:100%;background:var(--bg);color:var(--txt);font-family:var(--sa
         <button class="add-btn" id="add-btn">＋ Tugas baru</button>
       </div>
       <div class="scroll-area" id="scroll-area">
-        <div id="form-container"></div>
-        <div id="task-list"><div class="loading"><span class="spin"></span>Menghubungkan ke Google Sheets…</div></div>
+        <div id="tasks-panel">
+          <div id="form-container"></div>
+          <div id="task-list"><div class="loading"><span class="spin"></span>Menghubungkan ke Google Sheets…</div></div>
+        </div>
+        <div id="cal-panel" style="display:none">
+          <div class="cal-wrap">
+            <div class="cal-header">
+              <div class="cal-nav">
+                <button class="cal-nav-btn" id="cal-prev">‹</button>
+                <div class="cal-month" id="cal-month-lbl"></div>
+                <button class="cal-nav-btn" id="cal-next">›</button>
+              </div>
+              <button class="cal-today-btn" id="cal-today-btn">Hari ini</button>
+            </div>
+            <div class="cal-grid" id="cal-grid"></div>
+            <div id="day-panel-wrap"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -421,9 +437,14 @@ function render(){
   // sidebar visibility
   document.getElementById('sidebar-wrap').style.display=S.tab==='calendar'?'none':'';
   renderSidebar();
-  if(S.tab==='calendar') renderCalendar();
-  else if(S.tab==='areas') renderAreasTab();
-  else renderTasksTab();
+  if(S.tab==='calendar'){
+    renderCalendar();
+  } else {
+    document.getElementById('tasks-panel').style.display='';
+    document.getElementById('cal-panel').style.display='none';
+    if(S.tab==='areas') renderAreasTab();
+    else renderTasksTab();
+  }
 }
 
 function renderSidebar(){
@@ -572,12 +593,21 @@ function renderTasks(){
 // ── CALENDAR TAB ────────────────────────────────
 function renderCalendar(){
   document.getElementById('content-title').textContent='Kalender';
-  document.getElementById('add-btn').textContent='＋ Tugas baru';
-  document.getElementById('add-btn').onclick=()=>{S.tab='tasks';S.showForm=true;S.fd={title:'',area:'',priority:'mid',due:'',note:'',recurring:false,recurDay:''};render();};
-  document.getElementById('form-container').innerHTML='';
+  const addBtn=document.getElementById('add-btn');
+  addBtn.textContent='＋ Tugas baru';
+  addBtn.onclick=()=>{
+    S.tab='tasks';S.showForm=true;S.editId=null;
+    S.fd={title:'',area:'',priority:'mid',due:S.calSelected||'',note:'',recurring:false,recurDay:''};
+    render();
+  };
+
+  // Show/hide panels
+  document.getElementById('tasks-panel').style.display='none';
+  document.getElementById('cal-panel').style.display='';
 
   const yr=S.calYear, mo=S.calMonth;
-  const monthName=new Date(yr,mo,1).toLocaleDateString('id-ID',{month:'long',year:'numeric'});
+  document.getElementById('cal-month-lbl').textContent=new Date(yr,mo,1).toLocaleDateString('id-ID',{month:'long',year:'numeric'});
+
   const firstDay=new Date(yr,mo,1).getDay();
   const daysInMonth=new Date(yr,mo+1,0).getDate();
   const daysInPrev=new Date(yr,mo,0).getDate();
@@ -594,46 +624,36 @@ function renderCalendar(){
   const DOWS=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
   let gridHTML=DOWS.map(d=>`<div class="cal-dow">${d}</div>`).join('');
 
-  // Prev month days
   for(let i=firstDay-1;i>=0;i--){
-    const d=daysInPrev-i;
-    gridHTML+=`<div class="cal-day other-month"><div class="cal-day-num">${d}</div></div>`;
+    gridHTML+=`<div class="cal-day other-month"><div class="cal-day-num">${daysInPrev-i}</div></div>`;
   }
 
-  // This month days
   for(let d=1;d<=daysInMonth;d++){
     const dateStr=`${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const dayTasks=taskMap[dateStr]||[];
     const isToday=dateStr===today;
     const isSel=S.calSelected===dateStr;
-    let dotsHTML='';
-    dayTasks.forEach(t=>{
-      const cls=t.done?'done':t.recurring?'recur':'task';
-      dotsHTML+=`<span class="cal-dot ${cls}"></span>`;
-    });
+    let dotsHTML=dayTasks.map(t=>`<span class="cal-dot ${t.done?'done':t.recurring?'recur':'task'}"></span>`).join('');
     gridHTML+=`<div class="cal-day ${isToday?'is-today':''} ${isSel?'selected':''}" data-date="${dateStr}">
       <div class="cal-day-num">${d}</div>
       <div class="cal-dots">${dotsHTML}</div>
     </div>`;
   }
 
-  // Next month padding
   const total=firstDay+daysInMonth;
   const remaining=(7-total%7)%7;
   for(let d=1;d<=remaining;d++){
     gridHTML+=`<div class="cal-day other-month"><div class="cal-day-num">${d}</div></div>`;
   }
 
+  document.getElementById('cal-grid').innerHTML=gridHTML;
+
   // Day panel
   let panelHTML='';
   if(S.calSelected){
     const selTasks=taskMap[S.calSelected]||[];
-    const selDate=new Date(S.calSelected).toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long'});
-    panelHTML=`<div class="day-panel">
-      <div class="day-panel-title">
-        <span>${selDate}</span>
-        <span class="day-panel-close" id="dp-close">×</span>
-      </div>`;
+    const selDate=new Date(S.calSelected+'T00:00:00').toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long'});
+    panelHTML=`<div class="day-panel"><div class="day-panel-title"><span>${selDate}</span><span class="day-panel-close" id="dp-close">×</span></div>`;
     if(!selTasks.length){
       panelHTML+=`<div class="day-panel-empty">Tidak ada tugas di hari ini</div>`;
     } else {
@@ -650,37 +670,32 @@ function renderCalendar(){
     }
     panelHTML+='</div>';
   }
+  document.getElementById('day-panel-wrap').innerHTML=panelHTML;
 
-  document.getElementById('task-list').innerHTML='';
-  document.getElementById('scroll-area').innerHTML=`
-    <div class="cal-wrap">
-      <div class="cal-header">
-        <div class="cal-nav">
-          <button class="cal-nav-btn" id="cal-prev">‹</button>
-          <div class="cal-month">${monthName}</div>
-          <button class="cal-nav-btn" id="cal-next">›</button>
-        </div>
-        <button class="cal-today-btn" id="cal-today-btn">Hari ini</button>
-      </div>
-      <div class="cal-grid" id="cal-grid">${gridHTML}</div>
-      <div id="day-panel-wrap">${panelHTML}</div>
-    </div>`;
+  // Events — attach to static elements in cal-panel
+  document.getElementById('cal-prev').onclick=()=>{S.calMonth--;if(S.calMonth<0){S.calMonth=11;S.calYear--;}renderCalendar();};
+  document.getElementById('cal-next').onclick=()=>{S.calMonth++;if(S.calMonth>11){S.calMonth=0;S.calYear++;}renderCalendar();};
+  document.getElementById('cal-today-btn').onclick=()=>{S.calYear=new Date().getFullYear();S.calMonth=new Date().getMonth();S.calSelected=today;renderCalendar();};
 
-  document.getElementById('cal-prev').onclick=()=>{S.calMonth--;if(S.calMonth<0){S.calMonth=11;S.calYear--;}render();};
-  document.getElementById('cal-next').onclick=()=>{S.calMonth++;if(S.calMonth>11){S.calMonth=0;S.calYear++;}render();};
-  document.getElementById('cal-today-btn').onclick=()=>{S.calYear=new Date().getFullYear();S.calMonth=new Date().getMonth();S.calSelected=today;render();};
-
-  document.querySelectorAll('.cal-day[data-date]').forEach(el=>{
-    el.onclick=()=>{S.calSelected=el.dataset.date===S.calSelected?null:el.dataset.date;render();};
+  document.getElementById('cal-grid').querySelectorAll('.cal-day[data-date]').forEach(el=>{
+    el.onclick=()=>{S.calSelected=el.dataset.date===S.calSelected?null:el.dataset.date;renderCalendar();};
   });
-  const dpClose=document.getElementById('dp-close');
-  if(dpClose) dpClose.onclick=()=>{S.calSelected=null;render();};
 
-  document.querySelectorAll('.dp-cb').forEach(cb=>{
-    cb.onclick=e=>{e.stopPropagation();const t=S.tasks.find(x=>x.id===cb.dataset.id);if(t){t.done=!t.done;if(t.recurring&&t.done&&t.recurDay){const n=new Date(t.due);n.setMonth(n.getMonth()+1);t.due=n.toISOString().split('T')[0];}queueSave();render();}};
+  const dpClose=document.getElementById('dp-close');
+  if(dpClose) dpClose.onclick=()=>{S.calSelected=null;renderCalendar();};
+
+  document.getElementById('day-panel-wrap').querySelectorAll('.dp-cb').forEach(cb=>{
+    cb.onclick=e=>{
+      e.stopPropagation();
+      const t=S.tasks.find(x=>x.id===cb.dataset.id);
+      if(t){
+        t.done=!t.done;
+        if(t.recurring&&t.done&&t.recurDay){const n=new Date(t.due);n.setMonth(n.getMonth()+1);t.due=n.toISOString().split('T')[0];}
+        queueSave();renderCalendar();
+      }
+    };
   });
 }
-
 // ── AREAS TAB ───────────────────────────────────
 function renderAreasTab(){
   document.getElementById('content-title').textContent='Area & Proyek';
